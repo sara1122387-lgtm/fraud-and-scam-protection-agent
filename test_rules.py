@@ -88,3 +88,51 @@ def test_empty_message_is_rejected():
 def test_non_string_message_is_rejected():
     with pytest.raises(TypeError):
         analyze_message(None)
+
+
+def test_relative_impersonation_with_urgent_transfer_is_detected():
+    message = (
+        "اني ابن عمك، تلفوني راح ينطفي، "
+        "حوللي فلوس هسه ولا تتصل بي."
+    )
+
+    result = analyze_message(message)
+
+        # Regression test for relative impersonation and transfer pressure.
+    assert result["response"] == "warn"
+
+
+def test_safe_account_transfer_scam_is_detected():
+    message = (
+        "حول فلوسك لهذا الحساب الآمن حتى نحمي رصيدك "
+        "من الاختراق، ولا تتأخر."
+    )
+
+    result = analyze_message(message)
+
+        # Regression test for relative impersonation and transfer pressure.
+    assert result["response"] == "warn"
+
+
+def test_fake_prize_requesting_financial_information_is_detected():
+    message = (
+        "مبروك ربحت جائزة، افتح الرابط وأرسل معلومات بطاقتك "
+        "حتى تستلم المكافأة."
+    )
+
+    result = analyze_message(message)
+
+    assert result["response"] == "warn"
+
+
+def test_warning_about_otp_is_not_mistaken_for_a_credential_request():
+    message = (
+        "لا تشارك رمز التحقق مع أي شخص، "
+        "حتى لو ادعى أنه موظف دعم."
+    )
+
+    result = analyze_message(message)
+
+    # A protective warning should not be classified as high risk
+    # merely because it mentions an OTP.
+    assert result["response"] != "warn"

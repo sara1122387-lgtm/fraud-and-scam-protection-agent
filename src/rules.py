@@ -39,6 +39,7 @@ RULES = (
             "رقم بطاقتك",
             "بيانات البطاقة",
             "معلومات البطاقة",
+            "معلومات بطاقتك",
         ),
     ),
     Rule(
@@ -82,6 +83,40 @@ RULES = (
         ),
     ),
     Rule(
+        "relative_impersonation",
+        2,
+        (
+            "اني ابن عمك",
+            "انا ابن عمك",
+            "اني اخوك",
+            "انا اخوك",
+            "اني اختك",
+            "انا اختك",
+        ),
+    ),
+    Rule(
+        "transfer_request",
+        2,
+        (
+            "حوللي فلوس",
+            "حول لي فلوس",
+            "حول فلوسك",
+            "حول فلوس",
+            "دزلي فلوس",
+            "دز لي فلوس",
+        ),
+    ),
+    Rule(
+        "verification_avoidance",
+        2,
+        (
+            "لا تتصل بي",
+            "لا تتصل",
+            "لا تدق علي",
+            "لا تحجي وياه",
+        ),
+    ),
+    Rule(
         "urgency_pressure",
         1,
         (
@@ -107,6 +142,19 @@ RULES = (
         (
             "بسرعة",
             "بأسرع وقت",
+            "لا تتأخر",
+        ),
+    ),
+    Rule(
+        "safe_account_transfer",
+        3,
+        (
+            "الحساب الآمن",
+            "حساب آمن",
+            "حول فلوسك لهذا الحساب",
+            "انقل فلوسك لهذا الحساب",
+            "حتى نحمي رصيدك",
+            "نحمي رصيدك من الاختراق",
         ),
     ),
     Rule(
@@ -145,6 +193,25 @@ MIXED_INPUT_CUES = (
     "السياق هو",
     "أعتقد أن",
     "اعتقد ان",
+)
+
+PROTECTIVE_CREDENTIAL_WARNINGS = (
+    "لا تشارك رمز التحقق",
+    "لا تشارك كود التحقق",
+    "لا تعطي رمز التحقق",
+    "لا ترسل رمز التحقق",
+    "لا تفصح عن رمز التحقق",
+    "لا تشارك كلمة المرور",
+)
+
+EXPLICIT_CREDENTIAL_REQUESTS = (
+    "ارسل رمز التحقق",
+    "ارسل لي رمز التحقق",
+    "اعطني رمز التحقق",
+    "زودني برمز التحقق",
+    "شارك رمز التحقق",
+    "ارسل كود التحقق",
+    "اعطني كود التحقق",
 )
 
 
@@ -215,7 +282,30 @@ def analyze_message(message_text: str) -> dict:
 
     signals = []
 
+    protective_warning = (
+        _first_match(
+            normalized_text,
+            PROTECTIVE_CREDENTIAL_WARNINGS,
+        )
+        is not None
+    )
+
+    explicit_credential_request = (
+        _first_match(
+            normalized_text,
+            EXPLICIT_CREDENTIAL_REQUESTS,
+        )
+        is not None
+    )
+
     for rule in RULES:
+        if (
+            rule.name == "credential_request"
+            and protective_warning
+            and not explicit_credential_request
+        ):
+            continue
+
         matched_phrase = _first_match(
             normalized_text,
             rule.phrases,
