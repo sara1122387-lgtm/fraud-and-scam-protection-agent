@@ -1,0 +1,109 @@
+
+[
+  {
+    "id": "SCN001",
+    "scenario_type": "otp_phishing",
+    "input_mode": "message_only",
+    "message_text": "مرحبا، وياك دعم المحفظة. حسابك راح يتوقف خلال عشر دقايق، دز رمز التحقق OTP حتى نفعّله من جديد.",
+    "user_context": "",
+    "transfer_context": {},
+    "context_notes": "سيناريو اصطناعي يحاكي انتحال الدعم وطلب رمز التحقق مع التهديد بإيقاف الحساب.",
+    "expected_label": "scam",
+    "expected_signals": [
+      "credential_request",
+      "impersonation",
+      "urgency_pressure"
+    ],
+    "expected_reason": "طلب رمز التحقق مع انتحال جهة دعم والضغط بإيقاف الحساب.",
+    "expected_response": "warn",
+    "followup": null
+  },
+  {
+    "id": "SCN002",
+    "scenario_type": "ordinary_transfer",
+    "input_mode": "message_only",
+    "message_text": "هلا، هذا رقم زميلي الجديد. راح أحوّله المبلغ المتفقين عليه اليوم.",
+    "user_context": "",
+    "transfer_context": {},
+    "context_notes": "سيناريو اصطناعي يوضح أن وجود مستلم جديد وحده لا يكفي لاعتبار الرسالة احتيالية.",
+    "expected_label": "legitimate",
+    "expected_signals": [],
+    "expected_reason": "لا توجد في نص الرسالة مؤشرات واضحة ضمن القواعد الحالية.",
+    "expected_response": "no_clear_indicators",
+    "followup": null
+  },
+  {
+    "id": "SCN003",
+    "scenario_type": "advance_payment_scam",
+    "input_mode": "message_only",
+    "message_text": "حجز الدولار السياحي متوفر هسه، احجز حصتك بتحويل عربون بالدينار لهذا الحساب، والفرصة تنتهي اليوم.",
+    "user_context": "",
+    "transfer_context": {},
+    "context_notes": "سيناريو اصطناعي مستوحى من تحذير البنك المركزي العراقي بشأن عمليات الاحتيال المرتبطة بالدولار السياحي. المصدر: https://cbi.iq/news/print_news/2549",
+    "expected_label": "scam",
+    "expected_signals": [
+      "currency_exchange_request",
+      "advance_payment_request",
+      "urgency_pressure"
+    ],
+    "expected_reason": "طلب عربون مقدم ضمن عرض مالي مع ضغط زمني يستدعي التحقق من الجهة والعرض.",
+    "expected_response": "warn",
+    "followup": null
+  },
+  {
+    "id": "SCN004",
+    "scenario_type": "ambiguous_account_message",
+    "input_mode": "message_only",
+    "message_text": "حسابك بيه مشكلة، راسلني بسرعة حتى نحلها.",
+    "user_context": "",
+    "transfer_context": {},
+    "context_notes": "سيناريو اصطناعي غامض؛ لا يكفي النص وحده لتحديد إن كان احتيالاً.",
+    "expected_label": "ambiguous",
+    "expected_signals": [
+      "vague_account_claim",
+      "mild_urgency"
+    ],
+    "expected_reason": "ادعاء مبهم عن مشكلة في الحساب مع استعجال محدود، دون طلب حساس صريح.",
+    "expected_response": "clarify",
+    "followup": {
+      "question": "هل طلبت منك الرسالة رمز تحقق أو معلومات مالية، أو هددتك بإيقاف الحساب إذا لم تستجب؟",
+      "answer": "نعم، طلبت رمز التحقق وهددت بإيقاف الحساب إذا لم أرسله.",
+      "expected_label_after_answer": "scam"
+    }
+  },
+  {
+    "id": "SCN005",
+    "scenario_type": "agreed_transfer",
+    "input_mode": "message_with_context",
+    "message_text": "مثل ما اتفقنا، أرسل لك المبلغ اليوم. هذا رقم الحساب اللي أرسلته إلي.",
+    "user_context": "المستلم شخص أعرفه، واتفقنا سابقاً على المبلغ والغرض من التحويل.",
+    "transfer_context": {
+      "recipient_known": true,
+      "amount_agreed": true
+    },
+    "context_notes": "سيناريو اصطناعي للتحقق من أن السياق الإضافي منفصل عن نص الرسالة ولا يثبت السلامة بشكل قاطع.",
+    "expected_label": "legitimate",
+    "expected_signals": [],
+    "expected_reason": "لا توجد مؤشرات واضحة في النص وحده، والسياق المقدم يشير إلى اتفاق سابق لكنه غير متحقق منه بصورة مستقلة.",
+    "expected_response": "no_clear_indicators",
+    "followup": null
+  },
+  {
+    "id": "SCN006",
+    "scenario_type": "fake_grant_phishing",
+    "input_mode": "message_only",
+    "message_text": "مبروك، اسمك طلع ضمن المستفيدين من المنحة. افتح الرابط وسجّل بياناتك المالية حتى تستلم المبلغ اليوم.",
+    "user_context": "",
+    "transfer_context": {},
+    "context_notes": "سيناريو اصطناعي يحاكي رسالة منفعة مالية مزيفة تطلب معلومات مالية عبر رابط. المصدر المرجعي للتحذير من هذا النوع من الاحتيال: https://cbi.iq/news/view/3016",
+    "expected_label": "scam",
+    "expected_signals": [
+      "unverified_benefit",
+      "financial_data_request",
+      "suspicious_link"
+    ],
+    "expected_reason": "وعد بمنحة مع طلب بيانات مالية عبر رابط؛ يجب التحقق من الجهة عبر قناة رسمية مستقلة.",
+    "expected_response": "warn",
+    "followup": null
+  }
+]
