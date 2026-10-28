@@ -104,6 +104,8 @@ RULES = (
             "حول فلوس",
             "دزلي فلوس",
             "دز لي فلوس",
+            "دزلي المبلغ",
+            "دز لي المبلغ",
         ),
     ),
     Rule(
@@ -127,6 +129,7 @@ RULES = (
             "عشر دقائق",
             "الفرصة تنتهي",
             "تنتهي اليوم",
+            "بنهاية اليوم",
             "راح يتوقف",
             "راح يتوقف حسابك",
             "إيقاف الحساب",
@@ -143,6 +146,8 @@ RULES = (
             "بسرعة",
             "بأسرع وقت",
             "لا تتأخر",
+            "هسه",
+            "استعجل",
         ),
     ),
     Rule(
@@ -175,6 +180,15 @@ RULES = (
             "مشكلة بحسابك",
             "مشكلة في حسابك",
             "حسابك بيه خلل",
+        ),
+    ),
+    Rule(
+        "extortion_threat",
+        4,
+        (
+            "عندي صورك ومعلوماتك اذا ما وصل المبلغ",
+            "عندي صورك اذا ما وصل المبلغ",
+            "عندي معلوماتك اذا ما وصل المبلغ",
         ),
     ),
 )
@@ -214,9 +228,33 @@ EXPLICIT_CREDENTIAL_REQUESTS = (
     "اعطني كود التحقق",
 )
 
+EXTORTION_THREATS = (
+    "عندي صورك",
+    "عندي معلوماتك",
+    "راح انشر صورك",
+    "راح انشر صور",
+    "انشر صورك",
+    "انشر صور",
+    "راح انشر معلوماتك",
+    "انشر معلوماتك",
+    "راح افضحك",
+    "افضحك",
+    "انا املك صورك",
+)
+
+EXTORTION_MONEY_DEMANDS = (
+    "اذا ما وصل المبلغ",
+    "اذا ما تدفع",
+    "اذا ما دفعت",
+    "اذا ما تحول المبلغ",
+    "اذا ما ترسل المبلغ",
+    "اذا ما وصلني المبلغ",
+    "ارسل الاموال اليوم",
+)
+
 
 def _normalize(text: str) -> str:
-    """Normalize Arabic letter variants, diacritics, and whitespace."""
+    """Normalize Arabic letters, diacritics, punctuation, and whitespace."""
     text = text.casefold()
 
     text = text.translate(
@@ -234,6 +272,12 @@ def _normalize(text: str) -> str:
         char
         for char in text
         if unicodedata.category(char) != "Mn"
+    )
+
+    # Treat punctuation as word separators.
+    text = "".join(
+        " " if unicodedata.category(char).startswith("P") else char
+        for char in text
     )
 
     return re.sub(r"\s+", " ", text).strip()
@@ -316,6 +360,35 @@ def analyze_message(message_text: str) -> dict:
                 "name": rule.name,
                 "weight": rule.weight,
                 "matched_phrase": matched_phrase,
+            })
+
+    extortion_threat = _first_match(
+        normalized_text,
+        EXTORTION_THREATS,
+    )
+
+    extortion_demand = _first_match(
+        normalized_text,
+        EXTORTION_MONEY_DEMANDS,
+    )
+
+    if extortion_threat and extortion_demand:
+        existing_extortion = next(
+            (
+                signal
+                for signal in signals
+                if signal["name"] == "extortion_threat"
+            ),
+            None,
+        )
+
+        if existing_extortion is None:
+            signals.append({
+                "name": "extortion_threat",
+                "weight": 4,
+                "matched_phrase": (
+                    f"{extortion_threat} + {extortion_demand}"
+                ),
             })
 
     score = sum(signal["weight"] for signal in signals)

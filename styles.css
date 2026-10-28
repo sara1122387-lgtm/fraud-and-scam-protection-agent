@@ -1,0 +1,29 @@
+/* General page direction */
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+[data-testid="stMainBlockContainer"] {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Arabic text containers */
+.arabic-text {
+    direction: rtl;
+    text-align: right;
+    unicode-bidi: plaintext;
+    overflow-wrap: anywhere;
+}
+
+/* Streamlit content alignment */
+[data-testid="stMarkdownContainer"],
+[data-testid="stAlert"],
+[data-testid="stExpander"] {
+    text-align: right;
+}
+
+/* Arabic message input */
+textarea,
+input {
+    direction: rtl !important;
+    text-align: right !important;
+}

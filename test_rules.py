@@ -98,7 +98,7 @@ def test_relative_impersonation_with_urgent_transfer_is_detected():
 
     result = analyze_message(message)
 
-        # Regression test for relative impersonation and transfer pressure.
+    # Regression test for relative impersonation and urgent transfer pressure.
     assert result["response"] == "warn"
 
 
@@ -110,7 +110,7 @@ def test_safe_account_transfer_scam_is_detected():
 
     result = analyze_message(message)
 
-        # Regression test for relative impersonation and transfer pressure.
+    # Regression test for a suspicious safe-account transfer request.
     assert result["response"] == "warn"
 
 
@@ -136,3 +136,103 @@ def test_warning_about_otp_is_not_mistaken_for_a_credential_request():
     # A protective warning should not be classified as high risk
     # merely because it mentions an OTP.
     assert result["response"] != "warn"
+
+
+def test_card_closure_threat_with_card_number_request_is_high_risk():
+    message = (
+        "السلام عليكم ان لم ترسل لنا رقم بطاقتك بنهاية اليوم "
+        "فسوف يتم اغلاق بطاقتك نهائيا وللابد وبدون رجعة"
+    )
+
+    result = analyze_message(message)
+
+    assert result["response"] == "warn"
+
+
+def test_extortion_threat_demanding_money_is_high_risk():
+    message = (
+        "عندي صورك ومعلوماتك اذا ما وصل المبلغ "
+        "تعرف شنو راح يصير"
+    )
+
+    result = analyze_message(message)
+
+    assert result["response"] == "warn"
+
+
+def test_debt_reminder_is_not_automatically_high_risk():
+    message = (
+        "خوية الك يومين ماكو لا حس ولا نفس وين المبلغ؟"
+    )
+
+    result = analyze_message(message)
+
+    assert result["response"] != "warn"
+
+
+def test_urgent_debt_reminder_is_not_automatically_high_risk():
+    message = (
+        "عباس، تعبتني وياك يمته ترجع الدين صار شهر "
+        "والله محتاجه باجر لا تتأخر ما بقه عندي ولا فلس"
+    )
+
+    result = analyze_message(message)
+
+    assert result["response"] != "warn"
+
+
+def test_accident_money_request_requires_independent_verification():
+    message = (
+        "هلو خالو، محتاج فلوس بسرعة، سيارتي صارت بيها "
+        "حادث بالطريق، دزلي المبلغ هسه وأشرحلك بعدين."
+    )
+
+    result = analyze_message(message)
+
+    assert result["response"] == "clarify"
+    assert any(
+        signal["name"] == "transfer_request"
+        for signal in result["signals"]
+    )
+    assert any(
+        signal["name"] == "mild_urgency"
+        for signal in result["signals"]
+    )
+
+
+def test_extortion_detection_variations():
+    messages = [
+        "عندي صورك ومعلوماتك اذا ما وصل المبلغ تعرف شنو راح يصير",
+        "عندي صورك، إذا ما وصل المبلغ اليوم راح تندم",
+        "إذا ما تدفع المبلغ راح أنشر صورك",
+    ]
+
+    for message in messages:
+        result = analyze_message(message)
+        assert result["response"] == "warn", (
+            f"Expected warning for: {message}\n"
+            f"Actual result: {result}"
+        )
+
+
+def test_ordinary_photo_message_is_not_extortion():
+    message = "عندي صور من الرحلة وأريد أشاركها وياك"
+
+    result = analyze_message(message)
+
+    assert not any(
+        signal["name"] == "extortion_threat"
+        for signal in result["signals"]
+    )
+
+
+def test_implicit_photo_threat_with_money_demand_is_high_risk():
+    message = "انا املك صورك ارسل الاموال اليوم"
+
+    result = analyze_message(message)
+
+    assert result["response"] == "warn"
+    assert any(
+        signal["name"] == "extortion_threat"
+        for signal in result["signals"]
+    )
