@@ -1,0 +1,239 @@
+
+[
+  {
+    "id": "E001",
+    "message": "إذا ما حولت المبلغ اليوم راح أنشر الصور",
+    "context": {},
+    "expected": "warn",
+    "reason": "تهديد مشروط بالنشر مقابل المال"
+  },
+  {
+    "id": "E002",
+    "message": "عندي معلومات عنك، خلص الموضوع بتحويل بسيط",
+    "context": {},
+    "expected": "warn",
+    "reason": "ضغط مالي مصحوب بتهديد ضمني محتمل"
+  },
+  {
+    "id": "E003",
+    "message": "حول الفلوس ولا راح أفضحك",
+    "context": {},
+    "expected": "warn",
+    "reason": "تهديد صريح مرتبط بالدفع"
+  },
+  {
+    "id": "E004",
+    "message": "إذا ما وصلني المبلغ راح أنشر كلشي",
+    "context": {},
+    "expected": "warn",
+    "reason": "شرط مالي يتبعه تهديد بالنشر"
+  },
+  {
+    "id": "E005",
+    "message": "دزلي المبلغ هسه ولا تخبر أحد",
+    "context": {},
+    "expected": "clarify",
+    "reason": "استعجال وكتمان مع طلب مالي دون تهديد صريح"
+  },
+  {
+    "id": "E006",
+    "message": "حسابك راح يتوقف خلال ساعة، أرسل رمز التحقق",
+    "context": {},
+    "expected": "warn",
+    "reason": "انتحال محتمل واستعجال وطلب رمز تحقق"
+  },
+  {
+    "id": "E007",
+    "message": "نحتاج رقم بطاقتك والرمز حتى نرجع حسابك",
+    "context": {},
+    "expected": "warn",
+    "reason": "طلب بيانات مالية حساسة بذريعة استعادة الحساب"
+  },
+  {
+    "id": "E008",
+    "message": "لا تتصل بالشركة، أنا أخلص معاملتك إذا تحول المبلغ",
+    "context": {},
+    "expected": "warn",
+    "reason": "طلب مالي مع منع التحقق المستقل"
+  },
+  {
+    "id": "E009",
+    "message": "مبروك ربحت جائزة، افتح الرابط وأدخل بياناتك",
+    "context": {},
+    "expected": "warn",
+    "reason": "جائزة غير متوقعة مع رابط وطلب بيانات"
+  },
+  {
+    "id": "E010",
+    "message": "أرسل رمز الدخول حتى أتأكد أن الحساب حسابك",
+    "context": {},
+    "expected": "warn",
+    "reason": "طلب رمز دخول حساس"
+  },
+  {
+    "id": "E011",
+    "message": "أحتاج منك تحويل فلوس ضروري اليوم",
+    "context": {},
+    "expected": "clarify",
+    "reason": "طلب مالي عاجل دون أدلة كافية على الاحتيال"
+  },
+  {
+    "id": "E012",
+    "message": "صار حادث وأحتاج مساعدة مالية بسرعة",
+    "context": {},
+    "expected": "clarify",
+    "reason": "حالة طارئة محتملة تحتاج تحققًا مستقلًا"
+  },
+  {
+    "id": "E013",
+    "message": "ممكن تسلفني مبلغ وأرجعه نهاية الأسبوع",
+    "context": {},
+    "expected": "no_clear_indicators",
+    "reason": "طلب سلفة عادي دون مؤشرات إضافية"
+  },
+  {
+    "id": "E014",
+    "message": "لا تنسى تدفع فاتورة الإنترنت اليوم",
+    "context": {},
+    "expected": "no_clear_indicators",
+    "reason": "تذكير اعتيادي بالدفع"
+  },
+  {
+    "id": "E015",
+    "message": "حولت لك المبلغ، تأكد من وصوله",
+    "context": {},
+    "expected": "no_clear_indicators",
+    "reason": "رسالة اعتيادية عن تحويل مكتمل"
+  },
+  {
+    "id": "E016",
+    "message": "أرسلت لك صور الرحلة أمس",
+    "context": {},
+    "expected": "no_clear_indicators",
+    "reason": "ذكر الصور دون تهديد"
+  },
+  {
+    "id": "E017",
+    "message": "وصلتني رسالة تقول إن بطاقتي ستتوقف",
+    "context": {},
+    "expected": "clarify",
+    "reason": "نقل محتوى رسالة مريبة دون طلب واضح من المرسل"
+  },
+  {
+    "id": "E018",
+    "message": "صديقي طلب مني مبلغًا وقال إنه مستعجل",
+    "context": {
+      "relationship": "known",
+      "requested_action": "money_transfer"
+    },
+    "expected": "clarify",
+    "reason": "طلب مالي عاجل من شخص معروف يحتاج تحققًا"
+  },
+  {
+    "id": "E019",
+    "message": "وصلني رابط لتحديث المحفظة",
+    "context": {
+      "relationship": "unknown",
+      "requested_action": "link"
+    },
+    "expected": "clarify",
+    "reason": "الرابط غير معروف ولا توجد معلومات كافية"
+  },
+  {
+    "id": "E020",
+    "message": "الدعم الفني طلب مني رمز التحقق برسالة",
+    "context": {
+      "relationship": "claimed_organization",
+      "requested_action": "credentials"
+    },
+    "expected": "warn",
+    "reason": "طلب رمز تحقق من جهة تدعي أنها رسمية"
+  },
+  {
+    "id": "E021",
+    "message": "أخي يقول حول المبلغ لحساب جديد بدل حسابه المعتاد",
+    "context": {
+      "relationship": "known",
+      "requested_action": "money_transfer"
+    },
+    "expected": "clarify",
+    "reason": "تغيير غير معتاد في تفاصيل التحويل"
+  },
+  {
+    "id": "E022",
+    "message": "أرسل المبلغ لحسابي الجديد لأن القديم لا يعمل",
+    "context": {
+      "relationship": "known",
+      "requested_action": "money_transfer"
+    },
+    "expected": "clarify",
+    "reason": "طلب تغيير الحساب يحتاج تحققًا عبر وسيلة مستقلة"
+  },
+  {
+    "id": "E023",
+    "message": "لا تشارك رمز التحقق مع أي شخص",
+    "context": {},
+    "expected": "no_clear_indicators",
+    "reason": "نصيحة وقائية وليست طلبًا للرمز"
+  },
+  {
+    "id": "E024",
+    "message": "كيف أحمي حسابي من رسائل الاحتيال؟",
+    "context": {},
+    "expected": "no_clear_indicators",
+    "reason": "سؤال توعوي"
+  },
+  {
+    "id": "E025",
+    "message": "إذا تأخرت بالدفع راح أرفع شكوى رسمية",
+    "context": {},
+    "expected": "clarify",
+    "reason": "تحذير من إجراء رسمي وليس بالضرورة ابتزازًا"
+  },
+  {
+    "id": "E026",
+    "message": "أرسل الفلوس بسرعة وإلا راح تندم",
+    "context": {},
+    "expected": "clarify",
+    "reason": "تهديد مبهم مع طلب مالي"
+  },
+  {
+    "id": "E027",
+    "message": "طلبوا مني رقم البطاقة والرمز على رابط وصلني",
+    "context": {
+      "relationship": "unknown",
+      "requested_action": "credentials"
+    },
+    "expected": "warn",
+    "reason": "طلب بيانات مالية حساسة عبر رابط مجهول"
+  },
+  {
+    "id": "E028",
+    "message": "أرسلت الرمز بالفعل للشخص الذي راسلني",
+    "context": {
+      "relationship": "unknown",
+      "requested_action": "credentials",
+      "already_acted": "shared_information"
+    },
+    "expected": "warn",
+    "reason": "احتمال كشف بيانات حساسة مع الحاجة إلى إرشادات احتواء الضرر"
+  },
+  {
+    "id": "E029",
+    "message": "حولت المال وبعدها طلب مني رسومًا إضافية حتى يرجعه",
+    "context": {
+      "relationship": "unknown",
+      "requested_action": "money_transfer",
+      "already_acted": "transferred_money"
+    },
+    "expected": "warn",
+    "reason": "احتمال احتيال برسوم إضافية بعد الدفع"
+  },
+  {
+    "id": "E030",
+    "message": "إذا ما تحول المبلغ اليوم، راح أنشر الصور اللي عندي",
+    "context": {},
+    "expected": "warn",
+    "reason": "صياغة بديلة لتهديد مشروط بالمال لاختبار التعميم"
+  }
+]

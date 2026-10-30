@@ -1,2 +1,4 @@
 ﻿streamlit>=1.52,<2.0
 pytest>=8,<9
+groq
+python-dotenv
